@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>代码练习网站 - 进入社区</title>
+  <style>
+    /* 全局样式重置 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    /* 封面容器 */
+    .cover-container {
+      position: relative;
+      height: 100vh;
+      width: 100vw;
+      /* 渐变背景加上图案覆盖 */
+      background: 
+        radial-gradient(circle at 10% 20%, rgba(31, 41, 55, 0.9) 0%, rgba(15, 23, 42, 0.95) 90%),
+        url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* 标题样式 */
+    .cover-title {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease-out 0.5s forwards;
+      text-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+    }
+
+    /* 副标题样式 */
+    .cover-subtitle {
+      font-size: 1.2rem;
+      color: #cbd5e1;
+      margin-bottom: 3rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease-out 0.8s forwards;
+    }
+
+    /* 主按钮样式 */
+    .enter-button {
+      padding: 1.2rem 3rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #fff;
+      background: linear-gradient(45deg, #3b82f6, #60a5fa);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease-out 1.1s forwards;
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .enter-button:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 15px 30px rgba(59, 130, 246, 0.6);
+    }
+
+    .enter-button:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    /* 背景装饰元素 */
+    .background-elements {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .bg-circle:nth-child(1) {
+      width: 500px;
+      height: 500px;
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .bg-circle:nth-child(2) {
+      width: 400px;
+      height: 400px;
+      bottom: -150px;
+      right: -100px;
+      animation-delay: -5s;
+    }
+
+    .bg-circle:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      top: 50%;
+      right: 10%;
+      animation-delay: -10s;
+    }
+
+    /* 粒子效果 */
+    .particle {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: particleFloat 8s infinite ease-in-out;
+    }
+    
+    /* 鼠标跟随粒子 */
+    .mouse-particle {
+      position: fixed;
+      pointer-events: none;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(96, 165, 250, 0.6) 0%, rgba(59, 130, 246, 0.2) 70%);
+      box-shadow: 0 0 5px rgba(96, 165, 250, 0.5);
+      transition: transform 0.5s ease, opacity 0.3s ease;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    /* 动画关键帧 */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+      25% {
+        transform: translate(20px, 20px) rotate(5deg);
+      }
+      50% {
+        transform: translate(0, 40px) rotate(0deg);
+      }
+      75% {
+        transform: translate(-20px, 20px) rotate(-5deg);
+      }
+    }
+
+    @keyframes particleFloat {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0.8;
+      }
+      50% {
+        opacity: 0.2;
+      }
+      100% {
+        transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px)) rotate(var(--rotation)deg);
+        opacity: 0;
+      }
+    }
+
+    /* 推进动画 */
+    .cover-container.animate {
+      transform: scale(0.95);
+      opacity: 0;
+      transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    /* 页面加载容器 - 用于平滑过渡 */
+    .page-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      /* 与封面相同的背景 */
+      background: 
+        radial-gradient(circle at 10% 20%, rgba(31, 41, 55, 0.9) 0%, rgba(15, 23, 42, 0.95) 90%),
+        url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 1s ease;
+      pointer-events: none;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .cover-title {
+        font-size: 2.5rem;
+      }
+      
+      .cover-subtitle {
+        font-size: 1rem;
+      }
+      
+      .enter-button {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 封面容器 -->
+  <!-- 页面加载器 -->
+  <div class="page-loader" id="pageLoader"></div>
+  
+  <div class="cover-container" id="coverContainer">
+    <!-- 背景装饰元素 -->
+    <div class="background-elements">
+      <div class="bg-circle"></div>
+      <div class="bg-circle"></div>
+      <div class="bg-circle"></div>
+    </div>
+    
+    <!-- 标题 -->
+    <h1 class="cover-title">代码练习网站</h1>
+    <p class="cover-subtitle">分享知识，连接开发者的技术社区</p>
+    
+    <!-- 进入按钮 -->
+    <button class="enter-button" id="enterButton">立即探索</button>
+  </div>
+
+  <script>
+    // 页面加载后执行
+    document.addEventListener('DOMContentLoaded', () => {
+      const coverContainer = document.getElementById('coverContainer');
+      const enterButton = document.getElementById('enterButton');
+      
+      // 创建粒子效果
+      createParticles();
+      
+      // 初始化星空背景
+      initStarBackground();
+      
+      // 初始化鼠标跟随粒子
+      initMouseParticles();
+      
+      // 点击按钮触发动画并跳转
+      enterButton.addEventListener('click', () => {
+        // 创建点击时的粒子爆炸效果
+        createExplosionParticles(enterButton.getBoundingClientRect());
+        
+        // 平滑淡出效果
+        coverContainer.style.opacity = '0';
+        coverContainer.style.transform = 'scale(1.1)';
+        coverContainer.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        
+        // 同时添加背景渐变过渡
+        coverContainer.style.background = 'radial-gradient(circle at 10% 20%, rgba(31, 41, 55, 0.9) 0%, rgba(15, 23, 42, 0.95) 90%)';
+        
+        // 延迟跳转到论坛页面，确保动画完成
+        setTimeout(() => {
+          window.location.href = 'pages/index-content.html';
+        }, 800);
+      });
+    });
+    
+    // 创建背景粒子
+    function createParticles() {
+      const container = document.querySelector('.background-elements');
+      const particleCount = 30;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // 随机大小、位置和动画参数
+        const size = Math.random() * 4 + 1;
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        const delay = Math.random() * 5;
+        const duration = Math.random() * 10 + 5;
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${x}%`;
+        particle.style.top = `${y}%`;
+        particle.style.animationDelay = `${delay}s`;
+        particle.style.animationDuration = `${duration}s`;
+        
+        // 随机移动路径
+        particle.style.setProperty('--x', Math.random() * 200 - 100);
+        particle.style.setProperty('--y', Math.random() * 200 - 100);
+        particle.style.setProperty('--rotation', Math.random() * 360);
+        
+        container.appendChild(particle);
+      }
+    }
+    
+    // 创建爆炸粒子效果
+    function createExplosionParticles(buttonRect) {
+      const container = document.querySelector('.cover-container');
+      const particleCount = 50;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // 粒子大小和位置
+        const size = Math.random() * 6 + 2;
+        const angle = (Math.PI * 2 * i) / particleCount + (Math.random() * 0.5 - 0.25);
+        const distance = Math.random() * 100 + 50;
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${buttonRect.left + buttonRect.width / 2}px`;
+        particle.style.top = `${buttonRect.top + buttonRect.height / 2}px`;
+        particle.style.position = 'fixed';
+        
+        // 设置动画参数
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+        const rotation = Math.random() * 720;
+        const duration = Math.random() * 1.5 + 0.5;
+        
+        particle.style.animation = 'none';
+        particle.style.setProperty('--x', x);
+        particle.style.setProperty('--y', y);
+        particle.style.setProperty('--rotation', rotation);
+        
+        // 应用动画
+        particle.style.animation = `particleFloat ${duration}s ease-out forwards`;
+        
+        container.appendChild(particle);
+        
+        // 移除粒子
+        setTimeout(() => {
+          particle.remove();
+        }, duration * 1000);
+      }
+    }
+    
+    // 星空背景粒子系统
+    function initStarBackground() {
+      const container = document.querySelector('.cover-container');
+      const starCount = 200; // 大量背景星星
+      const stars = [];
+      
+      // 创建背景星星
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star-particle');
+        
+        // 随机大小和颜色
+        const size = Math.random() * 2 + 0.5; // 0.5-2.5px
+        const hue = Math.random() * 360; // 随机颜色
+        const opacity = 0.4 + Math.random() * 0.6; // 更高的透明度，更亮
+        
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.backgroundColor = `hsla(${hue}, 80%, 90%, ${opacity})`;
+        star.style.borderRadius = '50%';
+        star.style.position = 'absolute';
+        star.style.pointerEvents = 'none';
+        star.style.zIndex = '1';
+        
+        // 初始随机位置
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        
+        star.style.left = `${x}px`;
+        star.style.top = `${y}px`;
+        
+        container.appendChild(star);
+        
+        // 存储星星信息
+        stars.push({
+          element: star,
+          x: x,
+          y: y,
+          size: size,
+          baseOpacity: opacity,
+          currentOpacity: opacity,
+          // 闪烁相关参数
+          blinkRate: Math.random() * 3000 + 1000, // 闪烁间隔
+          lastBlink: Date.now(),
+          // 缓慢移动参数
+          moveSpeed: Math.random() * 0.02 + 0.01, // 非常缓慢的移动
+          moveDirection: Math.random() * Math.PI * 2,
+          // 生命周期
+          lifeSpan: Math.random() * 10000 + 20000, // 20-30秒
+          birthTime: Date.now()
+        });
+      }
+      
+      // 星星动画循环
+      function animateStars() {
+        const now = Date.now();
+        
+        stars.forEach((star, index) => {
+          // 闪烁效果
+          if (now - star.lastBlink > star.blinkRate) {
+            // 随机闪烁
+            const blinkFactor = Math.random() * 0.6 + 0.4; // 40%-100%的亮度变化
+            star.currentOpacity = star.baseOpacity * blinkFactor;
+            star.element.style.opacity = star.currentOpacity;
+            
+            // 重置闪烁计时器
+            star.lastBlink = now;
+            star.blinkRate = Math.random() * 3000 + 1000;
+          }
+          
+          // 缓慢移动
+          star.x += Math.cos(star.moveDirection) * star.moveSpeed;
+          star.y += Math.sin(star.moveDirection) * star.moveSpeed;
+          
+          // 边界检测，循环移动
+          if (star.x < 0) star.x = window.innerWidth;
+          if (star.x > window.innerWidth) star.x = 0;
+          if (star.y < 0) star.y = window.innerHeight;
+          if (star.y > window.innerHeight) star.y = 0;
+          
+          // 更新位置
+          star.element.style.left = `${star.x}px`;
+          star.element.style.top = `${star.y}px`;
+          
+          // 生命周期管理 - 随机消失并创建新星星
+          if (now - star.birthTime > star.lifeSpan) {
+            // 逐渐消失
+            if (star.currentOpacity > 0) {
+              star.currentOpacity -= 0.02;
+              star.element.style.opacity = Math.max(star.currentOpacity, 0);
+            } else {
+              // 移除并创建新星星
+              container.removeChild(star.element);
+              stars.splice(index, 1);
+              
+              // 创建新星星
+              createNewStar();
+            }
+          }
+        });
+        
+        requestAnimationFrame(animateStars);
+      }
+      
+      // 创建新星星的函数
+      function createNewStar() {
+        const star = document.createElement('div');
+        star.classList.add('star-particle');
+        
+        // 随机属性
+        const size = Math.random() * 2 + 0.5;
+        const hue = Math.random() * 360;
+        const opacity = 0.4 + Math.random() * 0.6;
+        
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.backgroundColor = `hsla(${hue}, 80%, 90%, ${opacity})`;
+        star.style.borderRadius = '50%';
+        star.style.position = 'absolute';
+        star.style.pointerEvents = 'none';
+        star.style.zIndex = '1';
+        star.style.opacity = '0'; // 开始透明，然后渐入
+        
+        // 随机位置
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        
+        star.style.left = `${x}px`;
+        star.style.top = `${y}px`;
+        
+        container.appendChild(star);
+        
+        // 渐入效果
+        setTimeout(() => {
+          star.style.transition = 'opacity 1s ease-out';
+          star.style.opacity = opacity;
+        }, 100);
+        
+        // 添加到数组
+        stars.push({
+          element: star,
+          x: x,
+          y: y,
+          size: size,
+          baseOpacity: opacity,
+          currentOpacity: opacity,
+          blinkRate: Math.random() * 3000 + 1000,
+          lastBlink: Date.now(),
+          moveSpeed: Math.random() * 0.02 + 0.01,
+          moveDirection: Math.random() * Math.PI * 2,
+          lifeSpan: Math.random() * 10000 + 20000,
+          birthTime: Date.now()
+        });
+      }
+      
+      // 开始星星动画
+      animateStars();
+    }
+    
+    // 鼠标跟随粒子效果 - 增强版：更亮的残影效果
+    function initMouseParticles() {
+      const container = document.querySelector('.cover-container');
+      const particleCount = 30; // 增加粒子数量
+      const particles = [];
+      let mouseX = 0;
+      let mouseY = 0;
+      let lastMouseX = 0;
+      let lastMouseY = 0;
+      let lastMouseTime = Date.now();
+      let isMouseMoving = false;
+      const mouseAttractionDistance = 150; // 减小吸引力范围，避免远处粒子被快速拉过来
+      const mouseStillThreshold = 1000; // 鼠标静止判定时间（毫秒）
+      
+      // 创建粒子
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('mouse-particle');
+        
+        // 粒子大小
+        const size = Math.random() * 4 + 2; // 2-6px，更大一些
+        const hue = 200 + Math.random() * 40; // 蓝色到紫色调
+        const opacity = 0.6 + Math.random() * 0.4; // 更亮，透明度更高
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.backgroundColor = `hsla(${hue}, 100%, 70%, ${opacity})`;
+        particle.style.boxShadow = `0 0 ${size * 2}px hsla(${hue}, 100%, 90%, ${opacity * 0.8})`; // 添加发光效果
+        particle.style.borderRadius = '50%';
+        particle.style.position = 'absolute';
+        particle.style.pointerEvents = 'none';
+        particle.style.zIndex = '2';
+        
+        container.appendChild(particle);
+        
+        // 初始随机位置 - 使用视窗尺寸直接计算，确保粒子始终在可视区域内
+        // 直接使用窗口可视区域，并添加边界检查
+        
+        // 获取当前视窗的实际可见区域
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        // 确保粒子在视窗内，留出安全边距
+        const safetyMargin = 20; // 小边距确保粒子完全可见
+        
+        // 使用伪随机分布，让粒子更均匀地分布在可视区域
+        // 创建基于时间的种子，使分布更加自然
+        const seed = Date.now() % 1000;
+        
+        // 计算在视窗内的安全位置
+        // 确保X坐标在安全范围内
+        let initialX = safetyMargin + Math.random() * (viewportWidth - 2 * safetyMargin);
+        // 确保Y坐标在安全范围内
+        let initialY = safetyMargin + Math.random() * (viewportHeight - 2 * safetyMargin);
+        
+        // 额外的边界检查，防止粒子超出可视区域
+        initialX = Math.max(safetyMargin, Math.min(initialX, viewportWidth - safetyMargin));
+        initialY = Math.max(safetyMargin, Math.min(initialY, viewportHeight - safetyMargin));
+        
+        particle.style.left = `${initialX}px`;
+        particle.style.top = `${initialY}px`;
+        
+        // 计算速度因子：前三个粒子分别为100%、80%、60%，超过5个则均匀分配
+        let speedFactor;
+        if (i === 0) {
+          speedFactor = 1.0; // 第一个粒子100%速度
+        } else if (i === 1) {
+          speedFactor = 0.8; // 第二个粒子80%速度
+        } else if (i === 2) {
+          speedFactor = 0.6; // 第三个粒子60%速度
+        } else {
+          // 超过3个粒子时，从0.6开始等差递减
+          // 确保最后一个粒子至少有20%的速度
+          const minSpeed = 0.15; // 降低最小速度，增强掉队效果
+          const maxSpeed = 0.6;
+          const step = (maxSpeed - minSpeed) / (particleCount - 3);
+          speedFactor = Math.max(maxSpeed - (i - 2) * step, minSpeed);
+        }
+        
+        // 为每个粒子随机分配边缘目标区域
+        const edgeTarget = Math.floor(Math.random() * 4); // 0:上, 1:右, 2:下, 3:左
+        
+        particles.push({
+          element: particle,
+          x: initialX,
+          y: initialY,
+          targetX: initialX,
+          targetY: initialY,
+          size: size,
+          opacity: opacity,
+          speedFactor: speedFactor,
+          // 随机漂浮速度和方向
+          driftX: (Math.random() - 0.5) * 2, // 调整为较慢的基础漂浮
+          driftY: (Math.random() - 0.5) * 2,
+          // 漂浮方向改变的间隔
+          changeInterval: Math.random() * 3000 + 2000, // 2-5秒
+          lastChange: Date.now(),
+          // 吸引力相关参数 - 减小引力强度
+          attractionStrength: 0.02 + Math.random() * 0.03, // 进一步降低基础吸引力
+          // 闪烁相关
+          glowIntensity: 1 + Math.random() * 0.5,
+          lastGlow: Date.now(),
+          glowRate: Math.random() * 2000 + 1000,
+          // 生命周期
+          lifeSpan: Math.random() * 15000 + 15000, // 15-30秒
+          birthTime: Date.now(),
+          // 边缘目标区域
+          edgeTarget: edgeTarget,
+          // 粒子惯性相关
+          currentVX: 0, // 当前X方向速度
+          currentVY: 0, // 当前Y方向速度
+          // 鼠标快速移动时的反应因子
+          reactionFactor: 0.7 + Math.random() * 0.3, // 0.7-1.0，值越小越容易掉队
+          // 中心通过标记 - 用于实现穿过中心的飘散效果
+          hasPassedCenter: false,
+          // 中心飘散阶段：'approaching'(接近中心)或'departing'(远离中心)
+          centerPhase: 'approaching',
+          // 用于跟踪粒子是否正在回归原本的运动轨迹
+          returningToTrajectory: false,
+          returnStartTime: 0
+        });
+      }
+      
+      // 监听鼠标移动
+      document.addEventListener('mousemove', (e) => {
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        lastMouseTime = Date.now();
+        isMouseMoving = true;
+      });
+      
+      // 检测鼠标是否静止的函数
+      function checkMouseStillness() {
+        const now = Date.now();
+        if (now - lastMouseTime > mouseStillThreshold) {
+          isMouseMoving = false;
+        }
+        requestAnimationFrame(checkMouseStillness);
+      }
+      
+      // 计算鼠标移动速度的函数
+      function calculateMouseSpeed() {
+        const dx = mouseX - lastMouseX;
+        const dy = mouseY - lastMouseY;
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+      
+      // 获取鼠标周边扩散区域的随机目标点
+      function getDiffusionTarget(mouseX, mouseY, particle) {
+        // 根据粒子的速度因子设置不同的扩散半径，形成层次感
+        const baseRadius = 80; // 基础扩散半径
+        const maxRadius = 300; // 最大扩散半径
+        
+        // 速度因子越小，扩散半径越大
+        const radius = baseRadius + ((1 - particle.speedFactor) * (maxRadius - baseRadius));
+        
+        // 添加随机性
+        const randomRadiusFactor = 0.7 + Math.random() * 0.6; // 0.7-1.3的随机因子
+        const finalRadius = radius * randomRadiusFactor;
+        
+        // 随机角度
+        const angle = Math.random() * Math.PI * 2;
+        
+        // 计算目标位置
+        const targetX = mouseX + Math.cos(angle) * finalRadius;
+        const targetY = mouseY + Math.sin(angle) * finalRadius;
+        
+        return { x: targetX, y: targetY };
+      }
+      
+      // 为粒子生成局部随机偏移，创建无规则移动效果
+      function getRandomOffset(range = 10) {
+        // 生成微小的随机偏移，范围在-range到+range之间
+        return {
+          x: (Math.random() - 0.5) * range * 2,
+          y: (Math.random() - 0.5) * range * 2
+        };
+      }
+      
+      // 动画循环
+      function animateParticles() {
+        const now = Date.now();
+        const mouseSpeed = calculateMouseSpeed();
+        const isMouseFastMoving = mouseSpeed > 50; // 鼠标快速移动阈值
+        
+        particles.forEach((p, index) => {
+          // 计算粒子到鼠标的距离
+          const dx = mouseX - p.x;
+          const dy = mouseY - p.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          // 只有在捕获范围内的粒子才会受鼠标影响
+          const isInCaptureRange = distance <= mouseAttractionDistance;
+          
+          // 检测鼠标是否静止
+          if (isMouseMoving) {
+            // 鼠标在移动中，只对捕获范围内的粒子起作用
+            if (isInCaptureRange) {
+              // 鼠标在吸引力范围内，粒子被吸引
+              
+              // 鼠标快速移动时，粒子更容易掉队
+              let attractionFactor = 1;
+              if (isMouseFastMoving) {
+                // 根据粒子反应因子和鼠标移动速度调整吸引力
+                attractionFactor = Math.max(0.1, 1 - (mouseSpeed / 500) * (1 - p.reactionFactor));
+              }
+              
+              // 优化引力算法：更符合自然引力效果
+              // 距离越近，速度越快；距离越远，速度越慢
+              // 使用距离的倒数作为主要因子，但限制最小值避免过强引力
+              const maxDistance = mouseAttractionDistance;
+              // 距离因子：距离越近，值越大（0.1到1之间）
+              const distanceFactor = Math.max(0.1, 1 - (distance / maxDistance));
+              // 距离平方因子：增强近距离和远距离的差异
+              const distanceSquaredFactor = distanceFactor * distanceFactor;
+              // 使用非线性因子增强自然感
+              const nonLinearFactor = Math.pow(distanceFactor, 3);
+              
+              // 计算总力
+              const force = nonLinearFactor * p.attractionStrength * attractionFactor;
+              
+              // 计算目标位置，快速移动时添加惯性偏移
+              const targetOffsetX = isMouseFastMoving ? (mouseX - lastMouseX) * (1 - p.speedFactor) * 0.3 : 0;
+              const targetOffsetY = isMouseFastMoving ? (mouseY - lastMouseY) * (1 - p.speedFactor) * 0.3 : 0;
+              
+              p.targetX = mouseX + (Math.random() - 0.5) * 15 + targetOffsetX;
+              p.targetY = mouseY + (Math.random() - 0.5) * 15 + targetOffsetY;
+            }
+          } else {
+            // 鼠标静止时，粒子会先散开到极致，然后再回归到他们本来的运动轨迹
+            if (isInCaptureRange) {
+              // 初始化散开状态
+              if (!p.scatterState) {
+                p.scatterState = 'scattering'; // scattering, scattered, returning
+                p.scatterStartTime = now;
+              }
+              
+              // 散开阶段
+              if (p.scatterState === 'scattering') {
+                const scatterDuration = 1500; // 1.5秒散开时间
+                const elapsed = now - p.scatterStartTime;
+                const progress = Math.min(elapsed / scatterDuration, 1);
+                
+                // 使用缓动函数使散开更自然
+                const easeOutProgress = 1 - Math.pow(1 - progress, 2);
+                
+                // 计算远离鼠标和中心的方向
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight / 2;
+                
+                // 计算远离鼠标的方向
+                let scatterDirectionX = p.x - mouseX;
+                let scatterDirectionY = p.y - mouseY;
+                const scatterDistance = Math.sqrt(scatterDirectionX * scatterDirectionX + scatterDirectionY * scatterDirectionY);
+                
+                // 归一化方向向量
+                if (scatterDistance > 0) {
+                  scatterDirectionX /= scatterDistance;
+                  scatterDirectionY /= scatterDistance;
+                }
+                
+                // 结合远离中心的因素，使粒子散得更开
+                const distanceFromCenter = Math.sqrt(
+                  Math.pow(p.x - centerX, 2) + Math.pow(p.y - centerY, 2)
+                );
+                
+                // 设置散开的目标距离（屏幕对角线的一定比例）
+                const maxScatterDistance = Math.sqrt(window.innerWidth * window.innerWidth + window.innerHeight * window.innerHeight) * 0.4;
+                
+                // 计算散开的目标位置
+                const scatterTargetX = p.x + scatterDirectionX * maxScatterDistance * easeOutProgress;
+                const scatterTargetY = p.y + scatterDirectionY * maxScatterDistance * easeOutProgress;
+                
+                p.targetX = scatterTargetX;
+                p.targetY = scatterTargetY;
+                
+                // 散开完成，进入回归阶段
+                if (progress >= 1) {
+                  p.scatterState = 'returning';
+                  p.returnStartTime = now;
+                  p.startReturnX = p.x;
+                  p.startReturnY = p.y;
+                }
+              }
+              
+              // 回归阶段
+              else if (p.scatterState === 'returning') {
+                const returnDuration = 2000; // 2秒回归时间
+                const elapsed = now - p.returnStartTime;
+                const progress = Math.min(elapsed / returnDuration, 1);
+                
+                // 使用缓动函数使回归更自然
+                const easeInOutProgress = progress < 0.5
+                  ? 2 * progress * progress
+                  : -1 + (4 - 2 * progress) * progress;
+                
+                // 如果回归完成，重置状态
+                if (progress >= 1) {
+                  p.scatterState = null;
+                }
+              }
+            }
+          }
+            
+            // 平滑移动粒子，根据粒子的速度因子和距离调整速度
+          let baseSpeed;
+          if (isMouseMoving && isInCaptureRange) {
+            // 鼠标移动时，使用基于距离的非线性速度 - 整体减慢速度
+            // 距离越近，速度越快；距离越远，速度越慢
+            const maxSpeed = isMouseFastMoving ? 0.08 : 0.1; // 降低最大基础速度
+            const minSpeed = 0.01; // 降低最小基础速度
+            
+            // 使用距离的倒数关系，但进行非线性处理使其更自然
+            const distanceRatio = distance / mouseAttractionDistance;
+            // 速度随距离减小而增加，使用平方关系增强效果
+            baseSpeed = maxSpeed - (distanceRatio * distanceRatio * (maxSpeed - minSpeed));
+          } else {
+            // 鼠标静止或不在捕获范围内，所有粒子回归到向中心范围飘散的运动轨迹
+            baseSpeed = 0.003; // 整体减慢速度，使动画更加平滑自然
+            
+            // 获取屏幕中心点
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            // 定义中心范围的半径（用户要求的中心范围）
+            const centerRadius = Math.min(window.innerWidth, window.innerHeight) * 0.15; // 视窗尺寸的15%作为中心范围半径
+            
+            // 计算与屏幕中心的距离和方向
+            const centerDx = centerX - p.x;
+            const centerDy = centerY - p.y;
+            const centerDistance = Math.sqrt(centerDx * centerDx + centerDy * centerDy);
+            
+            if (!p.hasPassedCenter) {
+              // 粒子尚未到达中心范围，向中心范围缓慢移动
+              if (centerDistance > centerRadius) { // 距离中心范围大于设定半径时向中心移动
+                // 设置目标为中心，但添加一些随机偏移使粒子不直接朝向中心点
+                const randomOffsetX = (Math.random() - 0.5) * centerRadius * 0.5;
+                const randomOffsetY = (Math.random() - 0.5) * centerRadius * 0.5;
+                p.targetX = centerX + randomOffsetX;
+                p.targetY = centerY + randomOffsetY;
+              } else {
+                // 已到达中心范围内，标记为通过中心
+                p.hasPassedCenter = true;
+                p.centerPhase = 'departing';
+                
+                // 计算远离中心的方向（基于进入方向的反向，但添加一些随机性）
+                const angleToCenter = Math.atan2(centerDy, centerDx);
+                // 添加一些随机性，使离开角度不完全是进入角度的反向
+                const randomVariation = (Math.random() - 0.5) * 0.4; // 最大20%的角度偏差
+                const departureAngle = angleToCenter + Math.PI + randomVariation;
+                
+                // 设置远离中心的目标点（屏幕边缘附近）
+                // 减小目标距离，使粒子移动更缓慢
+                const targetDistance = Math.max(window.innerWidth, window.innerHeight) * 0.7;
+                p.targetX = centerX + Math.cos(departureAngle) * targetDistance;
+                p.targetY = centerY + Math.sin(departureAngle) * targetDistance;
+              }
+            } else {
+              // 粒子已通过中心范围并被标记，持续向远离中心的方向移动
+              // 根据用户要求，已通过中心范围的粒子不会尝试往中心去走直到消散
+              
+              // 添加随机游荡效果，使粒子在向边缘移动时更加自然
+              if (now - p.lastChange > p.changeInterval) {
+                // 偶尔调整目标方向，增加游荡感
+                const smallOffset = (Math.random() - 0.5) * 30;
+                p.targetX += smallOffset;
+                p.targetY += smallOffset;
+                
+                // 更新计时器，更频繁地改变方向以增强游荡感
+                p.changeInterval = Math.random() * 2000 + 1000; // 1-3秒
+                p.lastChange = now;
+              }
+              
+              // 确保目标点始终在屏幕外，引导粒子远离中心
+              if (Math.abs(p.targetX - centerX) < window.innerWidth * 0.3 || 
+                  Math.abs(p.targetY - centerY) < window.innerHeight * 0.3) {
+                // 如果目标点离中心太近，重新计算更远离中心的目标
+                const currentAngle = Math.atan2(p.y - centerY, p.x - centerX);
+                const randomVariation = (Math.random() - 0.5) * 0.3;
+                const newAngle = currentAngle + randomVariation;
+                const farDistance = Math.max(window.innerWidth, window.innerHeight);
+                p.targetX = centerX + Math.cos(newAngle) * farDistance;
+                p.targetY = centerY + Math.sin(newAngle) * farDistance;
+              }
+            }
+          }
+          
+          const adjustedSpeed = baseSpeed * p.speedFactor;
+          
+          // 添加惯性效果，增加摩擦使移动更缓慢自然
+          const vx = (p.targetX - p.x) * adjustedSpeed;
+          const vy = (p.targetY - p.y) * adjustedSpeed;
+          
+          // 增加摩擦力，使粒子移动更缓慢
+          const inertiaFactor = 0.75; // 更大的摩擦力，使移动更缓慢
+          p.currentVX = p.currentVX * inertiaFactor + vx * (1 - inertiaFactor);
+          p.currentVY = p.currentVY * inertiaFactor + vy * (1 - inertiaFactor);
+          
+          // 更新位置
+          p.x += p.currentVX;
+          p.y += p.currentVY;
+          
+          // 检查是否需要重置位置（当粒子完全离开屏幕时）
+          if (p.x < -100 || p.x > window.innerWidth + 100 || p.y < -100 || p.y > window.innerHeight + 100) {
+            // 粒子完全离开屏幕，重新在另一侧生成
+            // 计算屏幕中心
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            // 确定在哪个边缘重新生成
+            let newX, newY;
+            const edge = Math.floor(Math.random() * 4);
+            
+            switch(edge) {
+              case 0: // 顶部
+                newX = Math.random() * window.innerWidth;
+                newY = -50;
+                break;
+              case 1: // 右侧
+                newX = window.innerWidth + 50;
+                newY = Math.random() * window.innerHeight;
+                break;
+              case 2: // 底部
+                newX = Math.random() * window.innerWidth;
+                newY = window.innerHeight + 50;
+                break;
+              case 3: // 左侧
+                newX = -50;
+                newY = Math.random() * window.innerHeight;
+                break;
+            }
+            
+            p.x = newX;
+            p.y = newY;
+            p.hasPassedCenter = false;
+            p.centerPhase = 'approaching';
+            p.targetX = centerX;
+            p.targetY = centerY;
+            p.currentVX = (centerX - newX) * 0.0001;
+            p.currentVY = (centerY - newY) * 0.0001;
+          }
+          
+          // 添加细微的随机飘动效果，模拟空气流动
+          if (Math.random() > 0.98) { // 较低的触发概率，使飘动更自然
+            p.x += (Math.random() - 0.5) * 0.5;
+            p.y += (Math.random() - 0.5) * 0.5;
+          }
+          
+          // 闪烁效果
+          if (now - p.lastGlow > p.glowRate) {
+            p.glowIntensity = 0.8 + Math.random() * 0.7;
+            p.lastGlow = now;
+            p.glowRate = Math.random() * 2000 + 1000;
+          }
+          
+          // 生命周期管理
+          const lifeProgress = (now - p.birthTime) / p.lifeSpan;
+          let lifeOpacityFactor = 1;
+          
+          // 渐入和渐出效果
+          if (lifeProgress < 0.1) {
+            lifeOpacityFactor = lifeProgress * 10;
+          } else if (lifeProgress > 0.9) {
+            lifeOpacityFactor = (1 - lifeProgress) * 10;
+            
+            // 生命周期结束，准备移除
+            if (lifeOpacityFactor <= 0) {
+              container.removeChild(p.element);
+              particles.splice(index, 1);
+              
+              // 创建新粒子替代
+              createNewParticle();
+              return;
+            }
+          }
+          
+          // 速度较慢的粒子透明度更低，形成残影效果
+          const opacityFactor = 0.4 + p.speedFactor * 0.6; // 更高的基础透明度
+          let finalOpacity;
+          
+          if (isMouseMoving && distance < mouseAttractionDistance) {
+            // 鼠标附近透明度调整，结合速度因子和发光强度
+            const newOpacity = p.opacity * opacityFactor * p.glowIntensity * lifeOpacityFactor * (1 + (1 - distance / mouseAttractionDistance) * 0.8);
+            finalOpacity = Math.min(newOpacity, 0.9);
+          } else {
+            // 远离鼠标或鼠标静止时的透明度
+            finalOpacity = p.opacity * opacityFactor * p.glowIntensity * lifeOpacityFactor;
+          }
+          
+          p.element.style.opacity = finalOpacity;
+          
+          // 更新发光效果
+           const glowSize = p.size * 2 * p.glowIntensity;
+           // 安全获取hue值，避免正则匹配失败
+           let hue = 220; // 默认hue值
+           const colorMatch = p.element.style.backgroundColor.match(/hsla\((\d+)/);
+           if (colorMatch && colorMatch[1]) {
+             hue = parseInt(colorMatch[1]);
+           }
+           p.element.style.boxShadow = `0 0 ${glowSize}px hsla(${hue}, 100%, 90%, ${finalOpacity * 0.8})`;
+          
+          // 更新粒子位置
+          p.element.style.left = `${p.x}px`;
+          p.element.style.top = `${p.y}px`;
+        });
+        
+        requestAnimationFrame(animateParticles);
+      }
+      
+      // 创建新粒子的函数
+      function createNewParticle() {
+        const particle = document.createElement('div');
+        particle.classList.add('mouse-particle');
+        
+        // 随机属性
+        const size = Math.random() * 4 + 2;
+        const hue = 200 + Math.random() * 40;
+        const opacity = 0.6 + Math.random() * 0.4;
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.backgroundColor = `hsla(${hue}, 100%, 70%, 0)`; // 开始透明
+        particle.style.boxShadow = `0 0 ${size * 2}px hsla(${hue}, 100%, 90%, 0)`;
+        particle.style.borderRadius = '50%';
+        particle.style.position = 'absolute';
+        particle.style.pointerEvents = 'none';
+        particle.style.zIndex = '2';
+        
+        // 随机位置（通常在屏幕边缘）
+        const edge = Math.floor(Math.random() * 4); // 0:上, 1:右, 2:下, 3:左
+        let x, y;
+        
+        switch(edge) {
+          case 0: // 上
+            x = Math.random() * window.innerWidth;
+            y = -20;
+            break;
+          case 1: // 右
+            x = window.innerWidth + 20;
+            y = Math.random() * window.innerHeight;
+            break;
+          case 2: // 下
+            x = Math.random() * window.innerWidth;
+            y = window.innerHeight + 20;
+            break;
+          case 3: // 左
+            x = -20;
+            y = Math.random() * window.innerHeight;
+            break;
+        }
+        
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        
+        container.appendChild(particle);
+        
+        // 计算速度因子（随机分配）
+        const speedFactor = 0.15 + Math.random() * 0.85; // 0.15-1.0
+        
+        // 初始化扩散目标（使用鼠标周边区域）
+        const initialDiffusionTarget = getDiffusionTarget(mouseX, mouseY, { speedFactor });
+        
+        // 添加到数组
+        const newParticle = {
+          element: particle,
+          x: x,
+          y: y,
+          targetX: x,
+          targetY: y,
+          size: size,
+          opacity: opacity,
+          speedFactor: speedFactor,
+          driftX: (Math.random() - 0.5) * 2,
+          driftY: (Math.random() - 0.5) * 2,
+          changeInterval: Math.random() * 3000 + 2000,
+          lastChange: Date.now(),
+          attractionStrength: 0.06 + Math.random() * 0.06,
+          glowIntensity: 1 + Math.random() * 0.5,
+          lastGlow: Date.now(),
+          glowRate: Math.random() * 2000 + 1000,
+          lifeSpan: Math.random() * 15000 + 15000,
+          birthTime: Date.now(),
+          currentVX: 0,
+          currentVY: 0,
+          reactionFactor: 0.7 + Math.random() * 0.3,
+          diffusionTargetX: initialDiffusionTarget.x,
+          diffusionTargetY: initialDiffusionTarget.y
+        };
+        
+        particles.push(newParticle);
+        
+        // 渐入效果
+        setTimeout(() => {
+          particle.style.transition = 'opacity 1s ease-out, box-shadow 1s ease-out';
+          particle.style.backgroundColor = `hsla(${hue}, 100%, 70%, ${opacity})`;
+          particle.style.boxShadow = `0 0 ${size * 2}px hsla(${hue}, 100%, 90%, ${opacity * 0.8})`;
+        }, 100);
+      }
+      
+      // 开始动画
+      animateParticles();
+      checkMouseStillness();
+    }
+  </script>
+</body>
+</html>
